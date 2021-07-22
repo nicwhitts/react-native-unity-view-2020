@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
+import android.view.SurfaceView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import com.unity3d.player.UnityPlayer;
@@ -11,14 +13,33 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
+class UnityPlayerr extends UnityPlayer {
+  public UnityPlayerr(Context context) {
+    super(context);
+  }
+
+  public void onViewAdded(View view) {
+
+    super.onViewAdded(view);
+
+    if(view.getClass() != SurfaceView.class) {
+
+      this.removeView(view);
+
+    }
+
+  }
+
+}
+
 public class UnityUtils {
     private static final CopyOnWriteArraySet<UnityEventListener> mUnityEventListeners =
             new CopyOnWriteArraySet<>();
-    private static UnityPlayer unityPlayer;
+    private static UnityPlayerr unityPlayer;
     private static boolean _isUnityReady;
     private static boolean _isUnityPaused;
 
-    public static UnityPlayer getPlayer() {
+    public static UnityPlayerr getPlayer() {
         if (!_isUnityReady) {
             return null;
         }
@@ -48,7 +69,7 @@ public class UnityUtils {
                     fullScreen = true;
                 }
 
-                unityPlayer = new UnityPlayer(activity);
+                unityPlayer = new UnityPlayerr(activity);
 
                 try {
                     // wait a moument. fix unity cannot start when startup.
